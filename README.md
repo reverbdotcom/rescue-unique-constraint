@@ -1,13 +1,13 @@
 # RescueUniqueConstraint
 
-Rails doesn't do a great job of rescuing ActiveRecord::RecordNotUnique
-violations resulting from a duplicate entry on a unique constraint.
+ActiveRecord doesn't do a great job of rescuing ActiveRecord::RecordNotUnique
+violations resulting from a duplicate entry on a database level unique constraint.
 
 This gem automatically rescues the error and instead adds a validation error
 on the field in question, making it behave as if you had a normal uniqueness
 validation.
 
-Note that if you have only a unique constraint and no uniquness validation, it
+Note that if you have only a unique constraint in the database and no uniqueness validation in ActiveRecord, it
 is possible for your object to validate but then fail to save.
 
 See Usage for more info.
