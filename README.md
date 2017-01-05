@@ -55,6 +55,7 @@ enter your database.
 After:
 
     class Thing < ActiveRecord::Base
+      include RescueUniqueConstraint
       rescue_unique_constraint index: "my_unique_index", field: "somefield"
     end
 
