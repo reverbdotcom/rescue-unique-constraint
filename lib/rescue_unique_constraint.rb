@@ -1,4 +1,6 @@
 require 'rescue_unique_constraint/version'
+require 'rescue_unique_constraint/adapter/postgresql_adapter'
+require 'rescue_unique_constraint/adapter/sqlite_adapter'
 require 'active_record'
 
 # Module which will rescue ActiveRecord::RecordNotUnique exceptions
@@ -16,40 +18,33 @@ module RescueUniqueConstraint
       indexes_to_rescue_on << [index, field]
     end
 
-    def matching_index(e)
-      if postgresql?
-        matching_index = find_index_for_postgres_exception(e.message)
-      elsif sqllite?
-        matching_index = find_index_for_sqllite_exception(e.message)
-      else
-        raise "Database (#{adapter_name}) not supported"
+    def matching_indexes(e)
+      indexes = indexes_to_rescue_on.select do |index|
+        database_adapter.index_error?(index, e.message)
       end
-      raise e unless matching_index.any?
-      matching_index
+      raise e unless indexes.any?
+      indexes
     end
 
     private
 
     attr_reader :indexes_to_rescue_on, :model
 
-    def find_index_for_postgres_exception(message)
-      indexes_to_rescue_on.select { |index| message[/#{index[0]}/] }
+    def database_adapter
+      @_database_adapter ||= (
+        case database_name
+        when :postgresql
+          Adapter::PostgresqlAdapter.new
+        when :sqlite
+          Adapter::SqliteAdapter.new
+        else
+          raise "Database (#{database_name}) not supported"
+        end
+      )
     end
 
-    def find_index_for_sqllite_exception(message)
-      indexes_to_rescue_on.select { |index| message[/UNIQUE.*#{index[1]}/] }
-    end
-
-    def adapter_name
-      @adapter_name ||= model.connection.adapter_name.downcase
-    end
-
-    def postgresql?
-      adapter_name == 'postgresql'
-    end
-
-    def sqllite?
-      adapter_name == 'sqlite'
+    def database_name
+      model.connection.adapter_name.downcase.to_sym
     end
   end
 
@@ -61,9 +56,7 @@ module RescueUniqueConstraint
   module ClassMethods
     # rubocop:disable MethodLength I only want one method polluting the model
     def index_rescue_handler
-      @index_rescue_handler ||= RescueUniqueConstraint::RescueHandler.new(
-        self
-      )
+      @index_rescue_handler ||= RescueUniqueConstraint::RescueHandler.new(self)
     end
 
     def rescue_unique_constraint(index:, field:)
@@ -72,12 +65,8 @@ module RescueUniqueConstraint
           begin
             create_or_update_without_rescue
           rescue ActiveRecord::RecordNotUnique => e
-            self.class.index_rescue_handler
-                .matching_index(e).each do |matching_index|
-              errors.add(
-                matching_index[1],
-                :taken
-              )
+            self.class.index_rescue_handler.matching_indexes(e).each do |matching_index|
+              errors.add(matching_index[1], :taken)
             end
             return false
           end
