@@ -6,8 +6,8 @@ require 'rescue_unique_constraint/version'
 Gem::Specification.new do |spec|
   spec.name          = "rescue_unique_constraint"
   spec.version       = RescueUniqueConstraint::VERSION
-  spec.authors       = ["Tam Dang", "Yan Pritzker", "Tanner Swenson"]
-  spec.email         = ["tam.dang@reverb.com","yan@reverb.com", "tannerswenson@gmail.com"]
+  spec.authors       = ["Tam Dang", "Yan Pritzker"]
+  spec.email         = ["tam.dang@reverb.com","yan@reverb.com"]
   spec.summary       = %q{Turns ActiveRecord::RecordNotUnique errors into ActiveRecord errors}
   spec.description   = %q{Rescues unique constraint violations and turns them into ActiveRecord errors}
   spec.homepage      = "https://github.com/reverbdotcom/rescue_unique_contraint"
