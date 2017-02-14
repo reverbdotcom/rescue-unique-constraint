@@ -21,7 +21,7 @@ module RescueUniqueConstraint
 
     def rescue_unique_constraint(index:, field:)
       unless method_defined?(:create_or_update_with_rescue)
-        define_method(:create_or_update_with_rescue) do
+        define_method(:create_or_update_with_rescue) do |*|
           begin
             create_or_update_without_rescue
           rescue ActiveRecord::RecordNotUnique => e
