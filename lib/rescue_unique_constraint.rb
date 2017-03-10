@@ -1,6 +1,7 @@
 require 'rescue_unique_constraint/version'
 require 'rescue_unique_constraint/index'
 require 'rescue_unique_constraint/rescue_handler'
+require 'rescue_unique_constraint/adapter/mysql_adapter'
 require 'rescue_unique_constraint/adapter/postgresql_adapter'
 require 'rescue_unique_constraint/adapter/sqlite_adapter'
 require 'active_record'

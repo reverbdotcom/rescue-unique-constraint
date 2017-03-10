@@ -25,6 +25,8 @@ module RescueUniqueConstraint
     def database_adapter
       @_database_adapter ||= (
         case database_name
+        when :mysql2
+          Adapter::MysqlAdapter.new
         when :postgresql
           Adapter::PostgresqlAdapter.new
         when :sqlite
