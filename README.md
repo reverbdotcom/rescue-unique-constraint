@@ -30,22 +30,26 @@ Or install it yourself as:
 
 Assuming you've added unique index:
 
-    class AddIndexToThing < ActiveRecord::Migration
-      disable_ddl_transaction!
+```ruby
+class AddIndexToThing < ActiveRecord::Migration
+  disable_ddl_transaction!
 
-      def change
-        add_index :things, :somefield, unique: true, algorithm: :concurrently, name: "my_unique_index"
-      end
-    end
+  def change
+    add_index :things, :somefield, unique: true, algorithm: :concurrently, name: "my_unique_index"
+  end
+end
+```
 
 Before:
 
-    class Thing < ActiveRecord::Base
-    end
+```ruby
+class Thing < ActiveRecord::Base
+end
 
-    thing = Thing.create(somefield: "foo")
-    dupe = Thing.create(somefield: "foo")
-    => raises ActiveRecord::RecordNotUnique
+thing = Thing.create(somefield: "foo")
+dupe = Thing.create(somefield: "foo")
+# => raises ActiveRecord::RecordNotUnique
+```
 
 Note that if you have `validates :uniqueness` in your model, it will prevent
 the RecordNotUnique from being raised in _some_ cases, but not all, as race
@@ -54,25 +58,28 @@ enter your database.
 
 After:
 
-    class Thing < ActiveRecord::Base
-      include RescueUniqueConstraint
-      rescue_unique_constraint index: "my_unique_index", field: "somefield"
-    end
+```ruby
+class Thing < ActiveRecord::Base
+  include RescueUniqueConstraint
+  rescue_unique_constraint index: "my_unique_index", field: "somefield"
+end
 
-    thing = Thing.create(somefield: "foo")
-    dupe = Thing.create(somefield: "foo")
-    => false
-    thing.errors[:somefield] == "somefield has already been taken"
-    => true
+thing = Thing.create(somefield: "foo")
+dupe = Thing.create(somefield: "foo")
+# => false
+thing.errors[:somefield] == "somefield has already been taken"
+# => true
+# => raises ActiveRecord::RecordNotUnique
+```
 
 ## Testing
 
 You'll need a database that supports unique constraints.
-This gem has been tested with PostgreSQL and SQLite only.
+This gem has been tested with PostgreSQL, MySQL and SQLite.
 
 ## Contributing
 
-1. Fork it ( https://github.com/[my-github-username]/rescue_unique_constraint/fork )
+1. [Fork it](https://github.com/reverbdotcom/rescue-unique-constraint/fork)
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
