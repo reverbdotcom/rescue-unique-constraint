@@ -30,7 +30,7 @@ module RescueUniqueConstraint
         when :postgresql
           Adapter::PostgresqlAdapter.new
         when :sqlite
-          Adapter::SqliteAdapter.new
+          Adapter::SqliteAdapter.new(@model.table_name)
         else
           raise "Database (#{database_name}) not supported"
         end
