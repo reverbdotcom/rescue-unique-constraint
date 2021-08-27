@@ -29,7 +29,7 @@ module RescueUniqueConstraint
             self.class.index_rescue_handler.matching_indexes(e).each do |matching_index|
               errors.add(matching_index.field, :taken)
             end
-            return false
+            raise e
           end
           true
         end
