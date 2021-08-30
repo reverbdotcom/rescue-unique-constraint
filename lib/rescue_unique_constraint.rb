@@ -10,12 +10,15 @@ require 'active_record'
 # and add errors for indexes that are registered with
 # rescue_unique_constraint(index:, field:)
 module RescueUniqueConstraint
+  RAILS_6_VERSION = 6
+
   def self.included(base)
     base.extend(ClassMethods)
   end
 
   # methods mixed into ActiveRecord class
   module ClassMethods
+
     def index_rescue_handler
       @_index_rescue_handler ||= RescueUniqueConstraint::RescueHandler.new(self)
     end
@@ -29,7 +32,8 @@ module RescueUniqueConstraint
             self.class.index_rescue_handler.matching_indexes(e).each do |matching_index|
               errors.add(matching_index.field, :taken)
             end
-            raise e
+            raise e if self.class.rails_6?
+            return false
           end
           true
         end
@@ -38,6 +42,12 @@ module RescueUniqueConstraint
         alias_method :create_or_update, :create_or_update_with_rescue
       end
       index_rescue_handler.add_index(index, field)
+    end
+
+    def rails_6?
+      Rails.gem_version.segments.first > RAILS_6_VERSION
+    rescue
+      false
     end
   end
 end
