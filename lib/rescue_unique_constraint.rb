@@ -45,7 +45,7 @@ module RescueUniqueConstraint
     end
 
     def rails_6?
-      Rails.gem_version.segments.first > RAILS_6_VERSION
+      Rails.gem_version.segments.first >= RAILS_6_VERSION
     rescue
       false
     end
