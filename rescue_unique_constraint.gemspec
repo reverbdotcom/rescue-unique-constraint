@@ -11,14 +11,14 @@ Gem::Specification.new do |spec|
   spec.summary       = %q{Turns ActiveRecord::RecordNotUnique errors into ActiveRecord errors}
   spec.description   = %q{Rescues unique constraint violations and turns them into ActiveRecord errors}
   spec.homepage      = "https://github.com/reverbdotcom/rescue_unique_contraint"
-  spec.license       = "Apache 2.0"
+  spec.license       = "Apache-2.0"
 
   spec.files         = `git ls-files -z`.split("\x0")
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "activerecord", ">= 3.2", "< 7"
+  spec.add_dependency "activerecord", ">= 3.2", "< 8"
 
   spec.add_development_dependency "bundler", "~> 2.2"
   spec.add_development_dependency "rake", "~> 10.5"
