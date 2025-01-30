@@ -1,5 +1,8 @@
 # RescueUniqueConstraint
 
+> [!WARNING]
+> This library is no longer maintained. Please consider forking the repository for your own use.
+
 ActiveRecord doesn't do a great job of rescuing ActiveRecord::RecordNotUnique
 violations resulting from a duplicate entry on a database level unique constraint.
 
